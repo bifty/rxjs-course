@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
 
     beginnerCourses$: Observable<Course[]>;
     advancedCourses$: Observable<Course[]>;
-    
+
     constructor() {
 
     }
@@ -23,7 +23,8 @@ export class HomeComponent implements OnInit {
         const http$ = createHTTPObservable('api/courses');
 
         const courses$: Observable<Course[]> = http$.pipe(
-          map(res => Object.values(res['payload']))
+          map(res => Object.values(res['payload'])),
+          shareReplay()
         );
 
         this.beginnerCourses$ = courses$.pipe(
