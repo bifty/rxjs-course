@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { interval, fromEvent, timer, Observable, noop } from 'rxjs';
+import { interval, fromEvent, timer, Observable, noop, merge } from 'rxjs';
 import { createHTTPObservable } from '../common/util';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 
 
 @Component({
@@ -15,6 +15,13 @@ export class AboutComponent implements OnInit {
 
   ngOnInit() {
 
+    const interval1$ = interval(1000);
+    const interval2$ = interval1$.pipe(
+      map(val => val * 10)
+      );
 
+      const result$ = merge(interval1$, interval2$);
+
+      result$.subscribe(console.log);
   }
 }
