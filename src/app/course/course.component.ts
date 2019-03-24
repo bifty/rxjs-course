@@ -1,54 +1,49 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
-import {Course} from "../model/course";
 import {
-    debounceTime,
-    distinctUntilChanged,
-    startWith,
-    tap,
-    delay,
-    map,
-    concatMap,
-    switchMap,
-    withLatestFrom,
-    concatAll, shareReplay
-} from 'rxjs/operators';
-import {merge, fromEvent, Observable, concat} from 'rxjs';
-import {Lesson} from '../model/lesson';
-
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild
+} from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { Course } from "../model/course";
+import {
+  debounceTime,
+  distinctUntilChanged,
+  startWith,
+  tap,
+  delay,
+  map,
+  concatMap,
+  switchMap,
+  withLatestFrom,
+  concatAll,
+  shareReplay
+} from "rxjs/operators";
+import { merge, fromEvent, Observable, concat } from "rxjs";
+import { Lesson } from "../model/lesson";
+import { createHTTPObservable } from "../common/util";
 
 @Component({
-    selector: 'course',
-    templateUrl: './course.component.html',
-    styleUrls: ['./course.component.css']
+  selector: "course",
+  templateUrl: "./course.component.html",
+  styleUrls: ["./course.component.css"]
 })
 export class CourseComponent implements OnInit, AfterViewInit {
+  course$: Observable<Course>;
+  lessons$: Observable<Lesson[]>;
 
+  @ViewChild("searchInput") input: ElementRef;
 
+  constructor(private route: ActivatedRoute) {}
 
-    @ViewChild('searchInput') input: ElementRef;
+  ngOnInit() {
+    const courseId = this.route.snapshot.params["id"];
+    this.course$ = createHTTPObservable(`/api/courses/${courseId}`);
+    this.lessons$ = createHTTPObservable(
+      `/api/lessons?courseId=${courseId}&pageSize=100`
+    ).pipe(map(res => res["payload"]));
+  }
 
-    constructor(private route: ActivatedRoute) {
-
-
-    }
-
-    ngOnInit() {
-
-        const courseId = this.route.snapshot.params['id'];
-
-
-
-    }
-
-    ngAfterViewInit() {
-
-
-
-
-    }
-
-
-
-
+  ngAfterViewInit() {}
 }
