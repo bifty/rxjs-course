@@ -6,7 +6,11 @@ export function createHTTPObservable(url: string) {
     const signal = controller.signal;
     fetch(url, { signal })
       .then(response => {
-        return response.json();
+        if (response.ok) {
+          return response.json();
+        } else {
+          observer.error("Request failed with status " + response.status);
+        }
       })
       .then(body => {
         observer.next(body);
