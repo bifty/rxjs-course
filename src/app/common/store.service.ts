@@ -40,21 +40,24 @@ export class Store {
     return this.filterByCategory("ADVANCED");
   }
 
-  selectCourseById(courseId: number): Observable<Course> {
+  selectCourseById(courseId: number) {
     return this.courses$.pipe(
-      map(courses => courses.find(course => course.id === courseId))
+      // tripple equals not working!
+      map(courses => courses.find(course => course.id == courseId)),
+      // filter undefined for first operator
+      filter(course => !!course)
     );
   }
 
   filterByCategory(category: string) {
     return this.courses$.pipe(
-      map(courses => courses.filter(course => course.category === category))
+      map(courses => courses.filter(course => course.category == category))
     );
   }
 
   saveCourse(courseId: number, changes): Observable<any> {
     const courses = this.subject.getValue();
-    const courseIndex = courses.findIndex(course => course.id === courseId);
+    const courseIndex = courses.findIndex(course => course.id == courseId);
 
     const newCourses = courses.slice(0);
 
